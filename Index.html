@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2024 KCSE Results</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      background-color: white;
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .header img {
+      width: 100px;
+      margin-bottom: 10px;
+    }
+
+    .header h1 {
+      font-size: 18px;
+      color: #333;
+      margin-bottom: 5px;
+    }
+
+    .header h2 {
+      font-size: 16px;
+      color: #555;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .form-group input, .form-group button {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .form-group button {
+      background-color: #007bff;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .form-group button:hover {
+      background-color: #0056b3;
+    }
+
+    .subjects {
+      display: none;
+    }
+
+    .subjects label {
+      display: block;
+      margin: 5px 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #f8f8f8;
+    }
+
+    .results-header {
+      text-align: center;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    .mean-grade {
+      text-align: center;
+      font-size: 16px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .student-info {
+      margin-top: 10px;
+      text-align: center;
+      font-size: 14px;
+      color: #555;
+    }
+
+    .error {
+      color: red;
+      font-size: 14px;
+      margin-top: -10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>The Kenya National Examinations Council</h1>
+      <h2>2024 KCSE Examination Provisional Results</h2>
+    </div>
+    <div id="login-form">
+      <div class="form-group">
+        <label for="name">Full Name:</label>
+        <input type="text" id="name" placeholder="Enter your full name (3 words)">
+        <span class="error" id="name-error"></span>
+      </div>
+      <div class="form-group">
+        <label for="index">Index Number:</label>
+        <input type="text" id="index" placeholder="Enter your index number">
+      </div>
+      <div class="form-group">
+        <label for="school">School Name:</label>
+        <input type="text" id="school" placeholder="Enter your school name">
+      </div>
+      <div class="form-group">
+        <button onclick="login()">View Results</button>
+      </div>
+    </div>
+
+    <div id="subjects-form" class="subjects">
+      <h3>Select Your 8 Subjects</h3>
+      <form id="subject-form">
+        <label><input type="checkbox" name="subject" value="English"> English</label>
+        <label><input type="checkbox" name="subject" value="Kiswahili"> Kiswahili</label>
+        <label><input type="checkbox" name="subject" value="Mathematics"> Mathematics</label>
+        <label><input type="checkbox" name="subject" value="Biology"> Biology</label>
+        <label><input type="checkbox" name="subject" value="Physics"> Physics</label>
+        <label><input type="checkbox" name="subject" value="Chemistry"> Chemistry</label>
+        <label><input type="checkbox" name="subject" value="History and Government"> History and Government</label>
+        <label><input type="checkbox" name="subject" value="Geography"> Geography</label>
+        <label><input type="checkbox" name="subject" value="Computer Studies"> Computer Studies</label>
+        <label><input type="checkbox" name="subject" value="Business"> Business</label>
+        <label><input type="checkbox" name="subject" value="Home Science"> Home Science</label>
+        <label><input type="checkbox" name="subject" value="Agriculture"> Agriculture</label>
+        <div class="form-group">
+          <button type="button" onclick="generateResults()">Generate Results</button>
+        </div>
+      </form>
+    </div>
+
+    <div id="results" class="results-table">
+      <h2 class="mean-grade" id="mean-grade"></h2>
+      <p class="student-info" id="student-info"></p>
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Subject Name</th>
+            <th>Grade</th>
+          </tr>
+        </thead>
+        <tbody id="results-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    const grades = ["A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D"];
+
+    function login() {
+      const name = document.getElementById("name").value.trim();
+      const index = document.getElementById("index").value.trim();
+      const school = document.getElementById("school").value.trim();
+
+      if (name.split(" ").length !== 3) {
+        document.getElementById("name-error").textContent = "Name must contain exactly 3 words!";
+        return;
+      } else {
+        document.getElementById("name-error").textContent = "";
+      }
+
+      if (!index || !school) {
+        alert("Please fill in all fields!");
+        return;
+      }
+
+      document.getElementById("login-form").style.display = "none";
+      document.getElementById("subjects-form").style.display = "block";
+    }
+
+    function generateResults() {
+      const selectedSubjects = Array.from(document.querySelectorAll('input[name="subject"]:checked'))
+        .map(checkbox => checkbox.value);
+
+      if (selectedSubjects.length !== 8) {
+        alert("Please select exactly 8 subjects!");
+        return;
+      }
+
+      const resultsBody = document.getElementById("results-body");
+      resultsBody.innerHTML = "";
+
+      let totalGradePoints = 0;
+
+      selectedSubjects.forEach((subject, index) => {
+        const grade = grades[Math.floor(Math.random() * grades.length)];
+        totalGradePoints += {
+          "A": 12,
+          "A-": 11,
+          "B+": 10,
+          "B": 9,
+          "B-": 8,
+          "C+": 7,
+          "C": 6,
+          "C-": 5,
+          "D+": 4,
+          "D": 3
+        }[grade];
+
+        const row = `<tr>
+          <td>${index + 1}</td>
+          <td>${subject}</td>
+          <td>${grade}</td>
+        </tr>`;
+        resultsBody.innerHTML += row;
+      });
+
+      const meanGrade = getMeanGrade(totalGradePoints / 8);
+      document.getElementById("mean-grade").textContent = `Mean Grade: ${meanGrade}`;
+
+      const name = document.getElementById("name").value;
+      const index = document.getElementById("index").value;
+      const school = document.getElementById("school").value;
+
+      document.getElementById("student-info").textContent = `${name} (${index}) - ${school}`;
+      document.getElementById("subjects-form").style.display = "none";
+      document.getElementById("results").style.display = "block";
+    }
+
+    function getMeanGrade(points) {
+      if (points >= 11) return "A";
+      if (points >= 10) return "A-";
+      if (points >= 9) return "B+";
+      if (points >= 8) return "B";
+      if (points >= 7) return "B-";
+      if (points >= 6) return "C+";
+      if (points >= 5) return "C";
+      if (points >= 4) return "C-";
+      return "D";
+    }
+  </script>
+</body>
+</html>
